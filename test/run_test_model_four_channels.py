@@ -6,8 +6,14 @@ Dong, 07/16/2024.
 """
 # Get all the paths for the type of data we will use. 1D or 2D.
 # All the parameters:
+path_your_code = '/content/drive/MyDrive/Public_Datasets/PulsewatchRelease/GitHub/PulsewatchRelease'
+# This path of ground truth should have the correct, non-repeated, extra UID ground truth now. However, the loading func 
+# written for the path of the other ground truth folder should have used dictionary to
+# eliminate the repeat segments error.
+path_GT = r'/content/drive/MyDrive/Public_Datasets/PulsewatchRelease/GitHub/Adjudication_UConn/final_attemp_4_1_Dong_Ohm_2024_02_18_copy'
 import sys
 import gc
+import os
 
 flag_linux = True # Default run on Linux system.
 flag_HPC = False # Default run not on HPC.
@@ -39,13 +45,21 @@ if flag_linux:
     print('Inside Linux')
     if flag_Colab:
         print('Inside Colab')
-        # For 'my_pathdef'
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/utils')
-        # Add my my_RNN_GRU_model
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/experiments/try_02_RNN_GRU')
+        # Add path for func 'my_pathdef', 'untar_files'
+        path_for_utils = os.path.join(path_your_code,'utils')
+        print('path_for_utils:',path_for_utils)
+        sys.path.append(path_for_utils)
+        # Add path for func 'my my_RNN_GRU_model'
+        path_for_models = os.path.join(path_your_code,'model')
+        print('path_for_models:',path_for_models)
+        sys.path.append(path_for_models)
+
         # Add remove_train_seg.py
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/ResNet_classification/utils')
-        path_GT = r'/content/drive/MyDrive/Adjudication_UConn/final_attemp_4_1_Dong_Ohm_2024_02_18_copy'
+        path_for_rm_seg = os.path.join(path_your_code,'test')
+        print('path_for_rm_seg:',path_for_rm_seg)
+        sys.path.append(path_for_rm_seg)
+        
+
 
 import my_pathdef # Inside utils
 

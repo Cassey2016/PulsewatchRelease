@@ -572,8 +572,9 @@ def train_valid_RNN_GRU_model_all(PARAMS_all):
         'valid_accuracy':[],
     }
     ckpt_model_file = os.path.join(checkpoint_path,modelckpt_name)
+    print(f'Debug 01/15/2025: ckpt path: {ckpt_model_file}')
     if flag_resume_training and os.path.exists(ckpt_model_file):
-        print(f'Debug: loading ckpt: {ckpt_model_file}')
+        print(f'Debug 01/15/2025: loading ckpt: {ckpt_model_file}')
         checkpoint = torch.load(ckpt_model_file)
         model.load_state_dict(checkpoint['model_state_dict'])
         # likelihood.load_state_dict(checkpoint['likelihood_state_dict'])

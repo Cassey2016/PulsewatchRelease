@@ -1,7 +1,7 @@
 """
 Modularized main code. The main code is never changed for different custom settings for better version control. 
-Input:
-
+Remember to change these paths:
+- path_your_code:
 Output:
 
 Dong, 01/04/2025.
@@ -9,7 +9,7 @@ Dong, 01/04/2025.
 import os
 import torch
 file_path = os.path.realpath(__file__)
-your_code_path = ''
+path_your_code = '/content/drive/MyDrive/Public_Datasets/PulsewatchRelease/GitHub/PulsewatchRelease'
 from datetime import datetime
 
 now = datetime.now() # Get the time now for model checkpoint saving.
@@ -108,9 +108,13 @@ def my_main(config):
         if flag_Colab:
             print('Inside Colab')
             # Add path for func 'my_pathdef', 'untar_files'
-            sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/utils')
+            path_for_utils = os.path.join(path_your_code,'utils')
+            print('path_for_utils:',path_for_utils)
+            sys.path.append(path_for_utils)
             # Add path for func 'my my_RNN_GRU_model'
-            sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/experiments/try_02_RNN_GRU')
+            path_for_models = os.path.join(path_your_code,'model')
+            print('path_for_models:',path_for_models)
+            sys.path.append(path_for_models)
 
     # Unpack the input output paths.
     import my_pathdef # Inside utils
@@ -129,8 +133,8 @@ def my_main(config):
     tar_aug_path = dict_paths['tar_aug_path']+fold_name # Add the fold name to the path. Only needed for aug path.
     dict_paths['aug_path'] = aug_path
     dict_paths['tar_aug_path'] = tar_aug_path
-    print('dict_paths[''aug_path'']',dict_paths['aug_path'])
-    print('dict_paths[''tar_aug_path'']',dict_paths['tar_aug_path'])
+    print('dict_paths[''data_path'']',dict_paths['data_path'])
+    print('dict_paths[''tar_path'']',dict_paths['tar_path'])
 
     # Untar the data first. Should work on both 1D PPG and 2D TFS or Poin.
     import untar_files
@@ -189,6 +193,11 @@ def my_main(config):
         datackpt_name = 'ckpt_dataset'+filename_output.split('.')[0]+'.pt'
         modelckpt_name = 'ckpt_train_model'+filename_output.split('.')[0]+'.pt'
         best_model_ckpt_name = filename_output.split('.')[0]
+        # 01/15/2025: If you want to resume training using our saved models,
+        # replace the 'modelckpt_name' with the corresponding model name in 
+        # /utils/my_pathdef.py.
+        # modelckpt_name = filename_output.split('.')[0]+'_epoch_'+'0043'+'_val_loss_'+'0.1470'+'.pt'
+        # best_model_ckpt_name = filename_output.split('.')[0]
 
         PARAMS_all = {'train_loader':train_loader,
                       'val_loader':val_loader,
