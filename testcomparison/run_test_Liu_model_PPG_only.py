@@ -10,6 +10,8 @@ Dong, 08/21/2024.
 """
 # Get all the paths for the type of data we will use. 1D or 2D.
 # All the parameters:
+path_your_code = '/content/drive/MyDrive/Public_Datasets/PulsewatchRelease/GitHub/PulsewatchRelease'
+path_GT = r'/content/drive/MyDrive/Public_Datasets/PulsewatchRelease/GitHub/Adjudication_UConn/final_attemp_4_1_Dong_Ohm_2024_02_18_copy'
 import sys
 import gc
 import argparse
@@ -34,7 +36,6 @@ parser.add_argument('--outf', default='.', help='folder to output model checkpoi
 parser.add_argument('--manualSeed', type=int, help='manual seed')
 os.environ['CUDA_VISIBLE_DEVICES'] = '8'
 
-# opt = parser.parse_args(['--dataroot','/mnt/r/ENGR_Chon/Dong/Public_Database/PPGArrhythmiaDetection-main','--cuda'])
 opt = parser.parse_args(['--dataroot','/content/drive/MyDrive/Public_Datasets/Liu_2022_JAHA','--workers','2','--manualSeed','42','--cuda'])
 
 flag_linux = True # Default run on Linux system.
@@ -67,36 +68,19 @@ if flag_linux:
     print('Inside Linux')
     if flag_Colab:
         print('Inside Colab')
-        # For 'my_pathdef'
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/utils')
-        # Add Luis' active learning code 'ss_active_learning'
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/BML_project/active_learning')
-        # Add Luis' Gaussian Process model 'ss_gp_model'
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/BML_project/models')
-        # Add Luis' 'dataloader' file, the 'update_train_loader_with_uncertain_samples' inside.
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/BML_project/utils_gp')
-        # Add my my_RNN_GRU_model
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/experiments/try_02_RNN_GRU')
-        # Add remove_train_seg.py
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/ResNet_classification/utils')
-        # Add test_model.py
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/experiments/try_04_run_several_models')
-        path_GT = r'/content/drive/MyDrive/Adjudication_UConn/final_attemp_4_1_Dong_Ohm_2024_02_18_copy'
-    else:
-        print('Not inside Colab')
-        # For 'my_pathdef'
-        sys.path.append('/mnt/r/ENGR_Chon/Dong/Github_private/Pulsewatch_labeling/DeepBeat/utils')
-        # Add Luis' active learning code 'ss_active_learning'
-        sys.path.append('/mnt/r/ENGR_Chon/Dong/Github_private/Pulsewatch_labeling/BML_project/active_learning')
-        # Add Luis' Gaussian Process model 'ss_gp_model'
-        sys.path.append('/mnt/r/ENGR_Chon/Dong/Github_private/Pulsewatch_labeling/BML_project/models')
-        # Add Luis' 'dataloader' file, the 'update_train_loader_with_uncertain_samples' inside, visualization.py, 'plot_comparative_results'
-        sys.path.append('/mnt/r/ENGR_Chon/Dong/Github_private/Pulsewatch_labeling/BML_project/utils_gp')
-        # Add my my_RNN_GRU_model
-        sys.path.append('/mnt/r/ENGR_Chon/Dong/Github_private/Pulsewatch_labeling/DeepBeat/experiments/try_02_RNN_GRU')
-        # Add remove_train_seg.py
-        sys.path.append('/mnt/r/ENGR_Chon/Dong/Github_private/Pulsewatch_labeling/ResNet_classification/utils')
-        import pretty_errors
+
+        # Add path for func 'my_pathdef', 'untar_files'
+        path_for_utils = os.path.join(path_your_code,'utils')
+        print('path_for_utils:',path_for_utils)
+        sys.path.append(path_for_utils)
+        # Add path for func 'my PPGVGGNet_4channels'
+        path_for_models = os.path.join(path_your_code,'traincomparison')
+        print('path_for_models:',path_for_models)
+        sys.path.append(path_for_models)
+        # Add remove_train_seg.py and test_model.py
+        path_for_rm_seg = os.path.join(path_your_code,'test')
+        print('path_for_rm_seg:',path_for_rm_seg)
+        sys.path.append(path_for_rm_seg)
 
 
 import my_pathdef # Inside utils
@@ -289,35 +273,3 @@ path_save_metrics = os.path.join(saving_path,output_filename)
 torch.save(metrics_remain,path_save_metrics)
 print('Saved the pt results to',path_save_metrics)
 ############## Remaining NSR testing ends ################
-# # Debug batch 219:
-# import remove_train_seg
-# dict_debug = remove_train_seg.my_debug_test(labels_path)
-# print('Debug main: dict_debug',dict_debug)
-# import pandas as pd
-# df_debug = pd.DataFrame({'keys':dict_debug.keys(),'values':dict_debug.values()})
-# print('Debug main: df_debug',df_debug)
-
-# remain_loader, remain_dataset = my_dataloader.load_test_dataloader(fold_name, df_debug,
-#                               dict_paths, normalize_type, data_format, data_dim,
-#                               batch_size=1,num_workers=1)
-
-# # Evaluate the model
-# metrics_remain = {'segment_names':[],
-#                 'test_accuracy':[],
-#                 'precision':[],
-#                 'recall':[],
-#                 'f1_score':[],
-#                 'auc_roc':[],
-#                 'y_true':[],
-#                 'y_pred':[],
-#                 'y_pred_prob':[],
-#                 'y_pred_logit':[]
-#                 }
-
-# import test_model
-# metrics_remain = test_model.my_test_model(model, remain_loader, n_classes, metrics_remain)
-
-# # Save the metrics
-# output_filename = 'test_03_debug_'+filename_output[:-4]+'.pt'
-# path_save_metrics = os.path.join(saving_path,output_filename)
-# torch.save(metrics_remain,path_save_metrics)

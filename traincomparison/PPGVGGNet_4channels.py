@@ -1,3 +1,19 @@
+"""
+Copied from https://github.com/zdzdliu/PPGArrhythmiaDetection
+Multiclass Arrhythmia Detection and Classification from Photoplethysmography Signals Using a Deep Convolutional Neural Network
+
+@article{liu2022multiclass,
+  title={Multiclass Arrhythmia Detection and Classification From Photoplethysmography Signals Using a Deep Convolutional Neural Network},
+  author={Liu, Zengding and Zhou, Bin and Jiang, Zhiming and Chen, Xi and Li, Ye and Tang, Min and Miao, Fen},
+  journal={Journal of the American Heart Association},
+  volume={11},
+  number={7},
+  pages={e023555},
+  year={2022},
+  publisher={Am Heart Assoc}
+}
+"""
+
 import torch
 import torch.nn as nn
 import torch.nn.parallel
@@ -9,7 +25,6 @@ from torchvision import transforms
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 
-# Dong, 08/20/2024: change the dataloader first. See if it works with the model.
 class VGG(nn.Module):
 
     def __init__(self, features, ngpu, num_classes=4, init_weights=True):

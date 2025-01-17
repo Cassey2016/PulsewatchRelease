@@ -310,8 +310,9 @@ def my_ckpt_path_2024_07_29(flag_Colab, fold_name):
                  'filename_ckpt_model':filename_ckpt_model}
     
     return dict_paths
+
 def my_ckpt_path_2024_08_21_PPG_only(flag_Colab, fold_name):
-    # For 1D PPG only with batch size 32.
+    # For Liu et al. 2022 JAHA model, using 1D PPG only with batch size 32.
     if flag_Colab:
         if fold_name == 'fold_1':
             path_ckpt_model = os.path.join(path_ckpt_model_root,'TestRNNGRU_batch32')

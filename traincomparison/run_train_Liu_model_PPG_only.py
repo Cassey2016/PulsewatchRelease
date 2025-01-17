@@ -3,10 +3,26 @@ Train Liu et al. 2022 JAHA model on Pulsewatch data.
 (experiments/try_10_Liu_JAHA_2022/main_02_train_on_Pulsewatch.py)
 
 Dong, 08/20/2024.
+
+I did not add training resume feature to load checkpoint.
+
+Copied from https://github.com/zdzdliu/PPGArrhythmiaDetection
+Multiclass Arrhythmia Detection and Classification from Photoplethysmography Signals Using a Deep Convolutional Neural Network
+
+@article{liu2022multiclass,
+  title={Multiclass Arrhythmia Detection and Classification From Photoplethysmography Signals Using a Deep Convolutional Neural Network},
+  author={Liu, Zengding and Zhou, Bin and Jiang, Zhiming and Chen, Xi and Li, Ye and Tang, Min and Miao, Fen},
+  journal={Journal of the American Heart Association},
+  volume={11},
+  number={7},
+  pages={e023555},
+  year={2022},
+  publisher={Am Heart Assoc}
+}
 """
 
 # Multiclass Arrhythmia Classification from Photoplethysmography Signals based on VGGNet
-
+path_your_code = '/content/drive/MyDrive/Public_Datasets/PulsewatchRelease/GitHub/PulsewatchRelease'
 import argparse
 import os
 import operator as op #
@@ -44,6 +60,7 @@ parser.add_argument('--outf', default='.', help='folder to output model checkpoi
 parser.add_argument('--manualSeed', type=int, help='manual seed')
 os.environ['CUDA_VISIBLE_DEVICES'] = '8'
 
+# This path was not used in this code. 
 opt = parser.parse_args(['--dataroot','/content/drive/MyDrive/Public_Datasets/Liu_2022_JAHA','--workers','2','--manualSeed','42','--cuda'])
 
 # ------------------------
@@ -96,10 +113,14 @@ if flag_linux:
     print('Inside Linux')
     if flag_Colab:
         print('Inside Colab')
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/utils')
-        # Add my my_RNN_GRU_model
-        sys.path.append('/content/drive/MyDrive/Colab_Notebooks/Github_private_another_prompt/Pulsewatch_labeling/DeepBeat/experiments/try_02_RNN_GRU')
-
+        # Add path for func 'my_pathdef', 'untar_files'
+        path_for_utils = os.path.join(path_your_code,'utils')
+        print('path_for_utils:',path_for_utils)
+        sys.path.append(path_for_utils)
+        # Add path for func 'my PPGVGGNet_4channels'
+        path_for_models = os.path.join(path_your_code,'traincomparison')
+        print('path_for_models:',path_for_models)
+        sys.path.append(path_for_models)
 # Unpack the input output paths.
 
 import my_pathdef # Inside utils
