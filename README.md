@@ -10,7 +10,7 @@ Acronym:
 - ECG: electrocardiogram.
 
 ## ICASSP 2025
-
+Dong, last edit 02/10/2025.
 ### Training model
 
 In the folder `train`:
@@ -118,3 +118,8 @@ In the folder `testcomparison`:
 
    - It will call the code `testcomparison/run_test_Liu_model_PPG_only.py`.
 
+### Evaluating models and calculate metrics
+
+In the folder `evalperformance`:
+
+Details on how to run the code are written in the `README.md` file in that folder.
