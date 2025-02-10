@@ -1,7 +1,6 @@
 """
-Test Liu et al. 2022 JAHA model on Pulsewatch data.
-(experiments/try_10_Liu_JAHA_2022/main_03_test_on_Pulsewatch_PPG_only.py)
-
+Test Liu et al. 2022 JAHA model with four channels of input on Pulsewatch data (not the original number of inputs in their paper).
+(DeepBeat/experiments/try_10_Liu_JAHA_2022/main_03_test_on_Pulsewatch_four_channels.py)
 Dong, 08/21/2024.
 """
 # Get all the paths for the type of data we will use. 1D or 2D.
@@ -13,9 +12,8 @@ import gc
 import argparse
 import os
 import torch
-print('torch.cuda.is_available()',torch.cuda.is_available())
-print('torch.cuda.device_count()',torch.cuda.device_count())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print('torch.cuda.device_count()',torch.cuda.device_count())
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataroot', required=True, help='path to dataset')
@@ -40,7 +38,7 @@ flag_Colab = True # False means on CentOS server.
 
 # --- Training data config ---
 fold_name = 'fold_1' # 'fold_1' or 'fold_2'
-data_dim = '1D_PPG' # '1D_PPG', '1D_PPG_HR', '2D_TFS', '2D_Poin', '2D_TFS_HR', '2D_Poin_HR'.
+data_dim = '1D_PPG_HR_ACC_rescaleHR' # '1D_PPG', '1D_PPG_HR', '2D_TFS', '2D_Poin', '2D_TFS_HR', '2D_Poin_HR'.
 dataset_name = 'Pulsewatch' # 'Pulsewatch', 'Simband', 'MIMICIII'.
 normalize_type = 'zero_one_normalize' # 'zero_one_normalize', 'standardize'.
 data_format = 'pt' # 'pt' (1D PPG+HR, 2D TFS, 2D Poin), 'csv' (1D ACC)
@@ -56,8 +54,8 @@ num_iterations=200 # Epoch.
 patience=10 # Num of epoch before validation does not improve.
 # --- Output config ---
 # parser.add_argument("--filename_output", type=str, default='train_Luis_20240604_'+fold_name+'.csv') # Default run not on HPC.
-filename_output='train_RNN_GRU_20240713_'+fold_name+'.csv' # Default run not on HPC.
-output_folder_name='TestRNNGRU_batch32' # 'TestPyTorch'
+filename_output='train_RNN_GRU_20240712_'+fold_name+'.csv' # Default run not on HPC.
+output_folder_name='TestRNNGRU_HR_ACC_rescaleHR' # 'TestPyTorch'
 
 # Append the directory to your python path using sys
 if flag_linux:
@@ -96,7 +94,7 @@ ACC_path = dict_paths['ACC_path']
 tar_ACC_path = dict_paths['tar_ACC_path']
 
 # Know the ckpt, fold name
-dict_paths_ckpt = my_pathdef.my_ckpt_path_2024_08_21_PPG_only(flag_Colab, fold_name)
+dict_paths_ckpt = my_pathdef.my_ckpt_path_2024_08_21_four_channels(flag_Colab, fold_name)
 path_ckpt_model = dict_paths_ckpt['path_ckpt_model']
 filename_ckpt_best_model = dict_paths_ckpt['filename_ckpt_best_model']
 filename_ckpt_model = dict_paths_ckpt['filename_ckpt_model']
@@ -110,6 +108,16 @@ if data_dim == '1D_PPG_HR_ACC' or data_dim == '1D_HR_ACC' or data_dim == '1D_PPG
     print('Debug: tar_ACC_path',tar_ACC_path)
     untar_files.my_untar_PPG_filt_30sec_csv(tar_ACC_path,ACC_path) # Returns None.
 # Unpack the input output paths.
+
+
+# Load the last model here.
+# path_temp = os.path.join(path_ckpt_model, filename_ckpt_model)
+# Load the best model here.
+print('device',device)
+print('torch.cuda.device_count()',torch.cuda.device_count())
+path_temp = os.path.join(path_ckpt_model, filename_ckpt_best_model)
+print(f'Debug: loading ckpt: {path_temp}')
+checkpoint = torch.load(path_temp,map_location='cuda:0')
 
 n_classes = 3 # NSR, AF, PACPVC
 num_classes = n_classes
@@ -143,24 +151,9 @@ else:
 import PPGVGGNet_4channels
 ngpu = int(opt.ngpu)
 if data_dim[:2] == '1D':
-    # model = my_RNN_GRU_model.myRNNGRUmodel(input_size_L, in_channels_d, num_classes).to(device)
     model = PPGVGGNet_4channels.vgg16_bn(in_channels = in_channels_d,ngpu=ngpu,num_classes=n_classes).to(device)
-# elif data_dim[:2] == '2D':
-#     model = my_RNN_GRU_model.myRNNGRUmodel_2D(input_size_L, in_channels_d, num_classes).to(device)
-
-# Load the last model here.
-# path_temp = os.path.join(path_ckpt_model, filename_ckpt_model)
-# Load the best model here.
-print('device',device)
-print('torch.cuda.device_count()',torch.cuda.device_count())
-path_temp = os.path.join(path_ckpt_model, filename_ckpt_best_model)
-print(f'Debug: loading ckpt: {path_temp}')
-checkpoint = torch.load(path_temp,map_location='cuda:0')
 
 model.load_state_dict(checkpoint['model_state_dict'])
-# metrics = checkpoint['metrics'] # Load the metrics.
-pytorch_total_params = sum(p.numel() for p in model.parameters())
-print(output_folder_name,fold_name,'pytorch_total_params',pytorch_total_params)
 
 # Load the unused data
 import my_dataloader
@@ -237,7 +230,6 @@ print('Saved the pt results to',path_save_metrics)
 
 
 ############## Remaining NSR testing ################
-
 dict_remain_labels = remove_train_seg.my_remove_both_folds(path_GT,fold_name)
 
 import pandas as pd
