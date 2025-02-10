@@ -116,19 +116,6 @@ def get_data_paths(data_dim,dataset_name,output_folder_name) -> dict:
     print('Debug 01/12/2025: dict_paths',dict_paths)
     return dict_paths
 
-# Following are the path for saved models.
-# def my_ckpt_path(flag_Colab):
-#     if flag_Colab:
-#         path_ckpt_model = r'/content/drive/MyDrive/Checkpoint_Colab/TestRNNGRU_2024_06_26_HR'
-#         filename_ckpt_best_model = 'ckpt_best_modeltrain_RNN_GRU_20240612_fold_2.pt'
-#         filename_ckpt_model = 'ckpt_train_modeltrain_RNN_GRU_20240612_fold_2.pt'
-
-#     dict_paths = {'path_ckpt_model': path_ckpt_model,
-#                  'filename_ckpt_best_model':filename_ckpt_best_model,
-#                  'filename_ckpt_model':filename_ckpt_model}
-    
-#     return dict_paths
-
 path_ckpt_model_root = '/content/drive/MyDrive/Public_Datasets/PulsewatchRelease/GitHub/Checkpoint_Colab'
 
 def my_ckpt_path_2024_07_01(flag_Colab, fold_name):
